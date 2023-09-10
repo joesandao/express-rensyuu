@@ -5,7 +5,13 @@ const stockRoutes = require('./route/stockRoutes');
 const app = express();
 
 // Mongooseとの接続設定
-mongoose.connect('mongodb://localhost:27017/yourDatabaseName', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/yourDatabaseName', { 
+    useNewUrlParser: true, 
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000 // 追加: サーバー選択のタイムアウト時間を5000ミリ秒に設定
+}).catch(err => {
+    console.error('Initial MongoDB connection error:', err); // 追加: 初期接続時のエラーをキャッチ
+});
 
 // 接続が成功した場合のリスナー
 mongoose.connection.once('open', () => {
@@ -14,7 +20,7 @@ mongoose.connection.once('open', () => {
 
 // エラーが発生した場合のリスナー
 mongoose.connection.on('error', err => {
-    console.error('Failed to connect to MongoDB:', err);
+    console.error('MongoDB connection error:', err);
 });
 
 app.use(express.json());
