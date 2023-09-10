@@ -113,8 +113,8 @@ router.post('/sales', async (req, res) => {
       stockItem.amount -= amount;
       
       // priceとamountが存在する場合のみtotalSalesに加算
-      if (price && amount) {
-        totalSales += amount * price;
+      if (price) {
+        totalSales += amount ? amount * price : price;
       }
 
       await stockItem.save();
