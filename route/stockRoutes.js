@@ -11,6 +11,10 @@ let totalSales = 0; // 売上合計を保持
 router.post('/stocks', async (req, res) => {
   const { name, amount } = req.body;
 
+  if (!Number.isInteger(amount)) {
+      return res.status(400).json({ message: 'ERROR' });
+  }
+  
   try {
     let stockItem = await Stock.findOne({ name });
     
@@ -48,24 +52,25 @@ router.get('/stocks', async (req, res) => {
 
 // (3) 販売
 router.post('/sales', async (req, res) => {
-  const { name, amount } = req.body;
-  
+  const { name, amount, price = 1 } = req.body;  // priceのデフォルト値を1に設定
+
   try {
-    const stockItem = await Stock.findOne({ name });
-    
-    if (!stockItem || stockItem.amount < amount) {
-      return res.status(400).json({ error: 'Not enough stock' });
-    }
-    
-    stockItem.amount -= amount;
-    totalSales += amount; // 簡単のため、1つの商品の単価を1と仮定
-    await stockItem.save();
-    
-    res.status(200).json({ name, amount });
+      const stockItem = await Stock.findOne({ name });
+      
+      if (!stockItem || stockItem.amount < amount) {
+          return res.status(400).json({ error: 'Not enough stock' });
+      }
+      
+      stockItem.amount -= amount;
+      totalSales += amount * price;  // amountにpriceを掛けて売上を計算
+      await stockItem.save();
+      
+      res.status(200).json({ name, amount });
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 // (4) 売り上げチェック
 router.get('/sales', (req, res) => {
