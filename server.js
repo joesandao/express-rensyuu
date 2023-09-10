@@ -4,14 +4,15 @@ const stockRoutes = require('./route/stockRoutes');
 
 const app = express();
 
-// Mongooseとの接続設定
-mongoose.connect('mongodb://localhost:27017/yourDatabaseName', { 
-    useNewUrlParser: true, 
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000 // 追加: サーバー選択のタイムアウト時間を5000ミリ秒に設定
-}).catch(err => {
-    console.error('Initial MongoDB connection error:', err); // 追加: 初期接続時のエラーをキャッチ
-});
+
+mongoose
+    .connect('mongodb://localhost:27017/yourDatabaseName')
+    .then(() =>{
+    console.log("DB接続中");
+    }).catch((err) => {
+        console.log(err);
+    });
+
 
 // 接続が成功した場合のリスナー
 mongoose.connection.once('open', () => {
