@@ -93,10 +93,15 @@ router.get('/stocks', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 // (3) 販売
 router.post('/sales', async (req, res) => {
-  const { name, amount, price = 1 } = req.body;  // priceのデフォルト値を1に設定
+  const { name, amount } = req.body;  
+  let { price } = req.body;
+
+  // priceが指定されていない、またはnumberでない場合には何もしない
+  if (price && typeof price !== 'number') {
+    return res.status(400).json({ error: 'Price must be a number when provided.' });
+  }
 
   try {
       const stockItem = await Stock.findOne({ name });
@@ -106,7 +111,12 @@ router.post('/sales', async (req, res) => {
       }
       
       stockItem.amount -= amount;
-      totalSales += amount * price;  // amountにpriceを掛けて売上を計算
+      
+      // priceとamountが存在する場合のみtotalSalesに加算
+      if (price && amount) {
+        totalSales += amount * price;
+      }
+
       await stockItem.save();
       
       res.status(200).json({ name, amount });
