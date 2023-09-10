@@ -6,7 +6,7 @@ const app = express();
 
 
 mongoose
-    .connect('mongodb://localhost:27017/yourDatabaseName')
+    .connect('mongodb://127.0.0.1:27017/DatabaseName')
     .then(() =>{
     console.log("DB接続中");
     }).catch((err) => {
@@ -26,6 +26,8 @@ mongoose.connection.on('error', err => {
 
 app.use(express.json());
 app.use('/v1', stockRoutes);
+
+
 
 const PORT = 3000;
 app.listen(PORT, () => {
