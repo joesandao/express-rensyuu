@@ -5,7 +5,7 @@ const router = express.Router();
 
 let totalSales = 0;
 
-// (1) Create or update stock
+// ストック全取得
 router.post('/stocks', async (req, res) => {
   const { name, amount } = req.body;
 
@@ -31,7 +31,7 @@ router.post('/stocks', async (req, res) => {
   }
 });
 
-// (2) Check stock
+// 在庫確認
 router.get('/stocks', async (req, res) => {
   try {
     const stocks = await Stock.find();
@@ -48,7 +48,7 @@ router.get('/stocks', async (req, res) => {
   }
 });
 
-// (3) Sales
+// 販売システム
 router.post('/sales', async (req, res) => {
   const { name, amount = 0 } = req.body;  // Set default value for amount
   const { price } = req.body;
@@ -78,12 +78,12 @@ router.post('/sales', async (req, res) => {
   }
 });
 
-// (4) Check sales
+// 売上確認
 router.get('/sales', (req, res) => {
   res.status(200).json({ sales: totalSales });
 });
 
-// (5) Delete all
+// 全部消す
 router.delete('/stocks', async (req, res) => {
   try {
     await Stock.deleteMany({});

@@ -14,12 +14,11 @@ mongoose
     });
 
 
-// 接続が成功した場合のリスナー
+// デバッグ
 mongoose.connection.once('open', () => {
     console.log('Successfully connected to MongoDB.');
 });
 
-// エラーが発生した場合のリスナー
 mongoose.connection.on('error', err => {
     console.error('MongoDB connection error:', err);
 });
